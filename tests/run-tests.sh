@@ -116,6 +116,25 @@ else
   echo "skip timeout test (no timeout/gtimeout on PATH)"
 fi
 
+# --- hooks/escalation-reminder.sh -------------------------------------------
+
+HOOK="$ROOT/hooks/escalation-reminder.sh"
+
+printf '{"tool_input":{"command":"ls -la"},"tool_response":{"stdout":"..."}}' | bash "$HOOK" > /dev/null 2>&1
+RC=$?
+if [ "$RC" -eq 0 ]; then ok=0; else ok=1; fi
+report "$ok" "hook: silent on unrelated commands"
+
+printf '{"tool_input":{"command":"./scripts/local-llm.sh task < x"},"tool_response":{"stderr":"local-llm: call failed (exit=1), escalate this task"}}' | bash "$HOOK" > /dev/null 2>&1
+RC=$?
+if [ "$RC" -eq 2 ]; then ok=0; else ok=1; fi
+report "$ok" "hook: fires (exit 2) on a failed local-llm.sh call"
+
+printf '{"tool_input":{"command":"./scripts/local-llm.sh task < x"},"tool_response":{"stdout":"a clean digest"}}' | bash "$HOOK" > /dev/null 2>&1
+RC=$?
+if [ "$RC" -eq 0 ]; then ok=0; else ok=1; fi
+report "$ok" "hook: silent on a successful local-llm.sh call"
+
 # --- ledger-stats.sh --------------------------------------------------------
 
 STATS_LOG="$TMP/stats.tsv"

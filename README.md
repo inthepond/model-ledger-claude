@@ -57,15 +57,17 @@ flowchart LR
     V -- "rewrite the delegate and<br/>do-not-delegate lists" --> R
 ```
 
-Reviews happen at model epochs (whenever a model version changes) and whenever soft failures accumulate; three soft failures in one task type are enough to pull that category from the delegation list.
+Reviews happen at model epochs (whenever a model version changes) and whenever soft failures accumulate; three soft failures in one task type are enough to pull that category from the delegation list. Conclusions are held loosely: an epoch's sample is small and models are non-stationary, so trust coarse patterns like input-size cliffs over fine-grained task taxonomies.
 
-## What the tiers cost
+## What routing buys you
 
-Illustrative arithmetic using Anthropic's published API prices as of mid-2026 (Claude Opus 5: $5 per million input tokens, $25 per million output; prompt-cache reads at roughly 0.1x the input price) and this repo's actual file sizes. Recompute for your own model and traffic; the point is the orders of magnitude, not the third decimal.
+**Context hygiene first.** The strongest reason to route is not the API bill. Everything that enters an agent's context rides along for the rest of the session: a 200KB CI log pasted in at turn 5 is 50,000 tokens of noise that every later turn must attend over, crowding out the working room the agent needs for the files and reasoning that matter. Tier 0 and Tier 1 exist to keep raw material out of the context window and let only conclusions in. Route for context quality, and the cost savings come along for free.
+
+**The dollar arithmetic, as supporting evidence.** Illustrative numbers using Anthropic's published API prices as of mid-2026 (Claude Opus 5: $5 per million input tokens, $25 per million output; prompt-cache reads at roughly 0.1x the input price) and this repo's actual file sizes. Recompute for your own model and traffic; the point is the orders of magnitude, not the third decimal.
 
 **The CLAUDE.md tax.** This template is about 5.4KB, roughly 1,400 tokens. It rides along on every request: about $0.007 per uncached turn on Opus 5, about $0.0007 per cached turn, so around $7 across 10,000 mostly-cached turns in a month. That sounds small until you notice that CLAUDE.md files in the wild are commonly 4 to 6 times longer and full of lines the model never acts on. The template's opening comment ("is this rule worth paying for on every turn?") is that multiplication applied line by line.
 
-**Context dumped into an agent is re-billed on every later turn.** Suppose a failing CI run produces a 200KB log, about 50,000 tokens:
+**Context dumped into an agent is re-billed on every later turn.** The same 200KB log, in dollars:
 
 | Approach | What enters Claude's context | Rough cost over a 40-turn session |
 |---|---|---|
@@ -73,7 +75,7 @@ Illustrative arithmetic using Anthropic's published API prices as of mid-2026 (C
 | Tier 1: `local-llm.sh "List each failure" < ci.log` | A ~500-token digest | About $0.01 |
 | Tier 2: paste the log into the session | All 50,000 tokens, re-read (at cache rates) on every later turn | Over $1 |
 
-A dollar per session sounds trivial; multiply it by every log, diff, and changelog across every session. The context-window cost compounds it: those 50,000 tokens also crowd out room the agent needs for actual work.
+A dollar per session sounds trivial; multiply it by every log, diff, and changelog across every session.
 
 **Why soft failures dominate the ledger.** One wrong-but-fluent digest that sends Claude down a false debugging path costs a full round trip of reasoning and tool calls at output prices ($25 per million tokens), plus your time reviewing the wrong fix. A single soft failure can erase the savings of a hundred successful delegations. That asymmetry is why the ledger treats `soft` as the expensive category, and why the delegation criterion asks whether errors get noticed rather than whether the task is hard.
 
@@ -175,7 +177,11 @@ Deterministic facts never go to a model, including the delegate. This is the mos
      50k to 100k    9/38 failed
    ```
 
-   This is the evidence the review questions in `model-ledger.md` ask for: which task types are safe to lock in as default delegations, and whether failures cluster by model or by input size (in which case tune `LOCAL_LLM_MAX_CHARS` rather than switching models).
+   This is the evidence the review questions in `model-ledger.md` ask for: which task types are safe to treat as default delegations, and whether failures cluster by model or by input size (in which case tune `LOCAL_LLM_MAX_CHARS` rather than switching models).
+
+### Optional: enforce escalation with a hook
+
+The escalation rule ("on failure, do not retry; escalate and record") is prose in CLAUDE.md, and prose instructions decay over a long session. [hooks/escalation-reminder.sh](hooks/escalation-reminder.sh) turns it into mechanism: a Claude Code PostToolUse hook that fires whenever a `local-llm.sh` call fails and feeds the protocol back to the agent as tool feedback. The `settings.json` wiring is in the script's header comment.
 
 ## Porting this to your harness
 

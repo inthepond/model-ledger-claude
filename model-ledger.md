@@ -18,6 +18,9 @@ Two records feed the calibration:
 2. When attribution is uncertain, write `unknown`; do not guess.
 3. If you suspect the prompt or the context rather than model capability, say so clearly in the notes.
 4. A model change starts a new epoch: add an epoch marker row, and treat all rows above it as reference only.
+5. Hold every conclusion loosely. An epoch rarely accumulates more than a few dozen rows and models are
+   non-stationary, so this ledger supports coarse patterns (an input-size cliff, a category that keeps
+   soft-failing), not a fine-grained taxonomy of what the delegate model can do.
 
 ## Failure Types
 
@@ -39,8 +42,9 @@ Two records feed the calibration:
 Review at the start of every epoch (whenever the Tier 1 model or a subagent model version changes),
 and any time soft failures start accumulating. Answer:
 
-- Which task types have enough auto-log volume and a high enough success rate to lock in as default
-  delegations? Compute the rates with `./scripts/ledger-stats.sh`; this file alone cannot answer it.
+- Which task types have enough auto-log volume and a high enough success rate to treat as default
+  delegations? Compute the rates with `./scripts/ledger-stats.sh`; this file alone cannot answer it,
+  and hold the answer loosely (principle 5).
 - Three or more soft failures in one task type: remove that category from the delegation list
   permanently, unless a verification signal can be added.
 - Do failures cluster in a particular input-size range? If so, tune `LOCAL_LLM_MAX_CHARS` instead

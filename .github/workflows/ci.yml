@@ -10,6 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: shellcheck
-        run: shellcheck local-llm.sh ledger-stats.sh tests/run-tests.sh
+        run: shellcheck local-llm.sh ledger-stats.sh hooks/escalation-reminder.sh tests/run-tests.sh
       - name: tests
         run: bash tests/run-tests.sh

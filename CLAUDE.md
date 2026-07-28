@@ -26,6 +26,8 @@ This project allocates compute across three tiers. Default to the lowest viable 
 **Tier 0 first.** Need a file list? Use `tree`. Need commit history? Use `git log --oneline`.
 Need to find a symbol? Use `rg`. Never call any model, including the Tier 1 delegate, to obtain deterministic facts.
 
+Routing is context hygiene as much as cost: keep raw material (logs, diffs, dumps) out of your context and bring in conclusions.
+
 ## Delegate Model (Tier 1)
 
 The default model is `kimi-k2.7-code:cloud`, which runs via Ollama Cloud; `LOCAL_LLM_MODEL`
