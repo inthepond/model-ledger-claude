@@ -1,0 +1,15 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: shellcheck local-llm.sh ledger-stats.sh tests/run-tests.sh
+      - name: tests
+        run: bash tests/run-tests.sh
