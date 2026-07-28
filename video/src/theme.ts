@@ -1,13 +1,12 @@
 export const C = {
-  bg: '#0b0e14',
-  panel: '#10141d',
-  panelBorder: '#1f2733',
-  text: '#e6edf3',
-  dim: '#7d8590',
-  green: '#3fb950',
-  amber: '#d29922',
-  red: '#f85149',
-  blue: '#58a6ff',
+  bg: '#050505',
+  panel: '#0d0d0d',
+  border: '#232323',
+  grid: '#1a1a1a',
+  text: '#f7f7f7',
+  dim: '#9a9a9a',
+  faint: '#585858',
+  gray: '#8c8c8c',
 };
 
 export const MONO = 'Menlo, "SF Mono", Consolas, "Liberation Mono", monospace';
