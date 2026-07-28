@@ -1,4 +1,3 @@
 .DS_Store
 docs/model-ledger-auto.tsv
-video/node_modules/
-video/out/
+video/

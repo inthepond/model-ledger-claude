@@ -4,7 +4,7 @@ A CLAUDE.md template for [Claude Code](https://claude.com/claude-code) that trea
 
 ![A short animated tour of model-ledger-claude](assets/intro.gif)
 
-There is also a [56-second intro video](https://github.com/inthepond/model-ledger-claude/releases/latest/download/intro.mp4); both are rendered with [Remotion](https://www.remotion.dev) from the source in [video/](video/).
+There is also a [56-second intro video](https://github.com/inthepond/model-ledger-claude/releases/latest/download/intro.mp4); both are rendered with [Remotion](https://www.remotion.dev).
 
 ## What is a CLAUDE.md?
 
