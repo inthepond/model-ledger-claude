@@ -2,6 +2,10 @@
 
 A CLAUDE.md template for [Claude Code](https://claude.com/claude-code) that treats model capacity as a budgeted resource. It routes work to the cheapest executor that can do it reliably, escalates loudly when that executor is not enough, and keeps a written ledger of every escalation so the routing rules are calibrated by evidence instead of intuition.
 
+![A short animated tour of model-ledger-claude](assets/intro.gif)
+
+There is also a [46-second intro video](https://github.com/inthepond/model-ledger-claude/releases/latest/download/intro.mp4); both are rendered with [Remotion](https://www.remotion.dev) from the source in [video/](video/).
+
 ## What is a CLAUDE.md?
 
 Claude Code automatically injects the `CLAUDE.md` at a project's root into the context of every request. It is the standard place for project-specific instructions: build commands, conventions, and rules for how the agent should work. Because it is re-sent on every turn, every line in it has a recurring token cost. This template takes that constraint seriously: its very first rule is a comment telling you to delete anything that is not worth paying for on every turn.
